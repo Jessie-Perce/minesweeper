@@ -1,9 +1,8 @@
 package model;
 
 import java.util.Random;
-import java.util.Scanner;
 
-public class Minesweeper {
+public class Board {
     private static final int MAX_ROWS = 99;
     private static final int MAX_COLS = 99;
     private static final double MAX_BOMBS_RATIO = .5;
@@ -16,7 +15,7 @@ public class Minesweeper {
     private final int bombs;
     private GameState gameState;
 
-    public Minesweeper(int rows, int cols, int bombs) {
+    public Board(int rows, int cols, int bombs) {
         this.rows = Math.min(rows, MAX_ROWS);
         this.cols = Math.min(cols, MAX_COLS);
         this.squares = this.rows * this.cols;
@@ -145,6 +144,10 @@ public class Minesweeper {
         board[i][j].mark();
     }
 
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
     public int getMaxRows() {
         return this.rows;
     }
@@ -164,87 +167,5 @@ public class Minesweeper {
         }
 
         return boardString.toString();
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String input;
-        String[] tokens;
-        Minesweeper game = null;
-
-        boolean sentinel = true;
-
-        while (sentinel) {
-            input = sc.nextLine();
-            tokens = input.split(" ");
-
-            switch (tokens[0]) {
-                case ("start") :
-                    if (tokens.length > 3) {
-                        int rows = Integer.parseInt(tokens[1]);
-                        int cols = Integer.parseInt(tokens[2]);
-                        int bombs = Integer.parseInt(tokens[3]);
-                        game = new Minesweeper(rows, cols, bombs);
-                    } else {
-                        System.out.println("Invalid game: hit enter for help.");
-                    }
-                    break;
-                case ("restart") :
-                    if (tokens.length > 3) {
-                        int rows = Integer.parseInt(tokens[1]);
-                        int cols = Integer.parseInt(tokens[2]);
-                        int bombs = Integer.parseInt(tokens[3]);
-                        game = new Minesweeper(rows, cols, bombs);
-                    } else {
-                        System.out.println("Invalid game: hit enter for help. Otherwise this game will continue.");
-                    }
-                    break;
-                case ("reveal") :
-                    if (game != null) {
-                        int row = Integer.parseInt(tokens[1]);
-                        int col = Integer.parseInt(tokens[2]);
-
-                        if (row < game.getMaxRows() && col < game.getMaxCols()) {
-                            game.reveal(row, col);
-                        } else {
-                            System.out.println("Not valid dumbass.");
-                        }
-                    }
-                    break;
-                case ("mark") :
-                    if (game != null) {
-                        int row = Integer.parseInt(tokens[1]);
-                        int col = Integer.parseInt(tokens[2]);
-
-                        if (row < game.getMaxRows() && col < game.getMaxCols()) {
-                            game.mark(row, col);
-                        } else {
-                            System.out.println("Not valid dumbass.");
-                        }
-                    }
-                    break;
-                case ("exit") :
-                    sentinel = false;
-                    break;
-                default :
-                    System.out.println("'start [rows] [cols] [bombs]': starts a game with the specified number of rows, columns, and bombs.");
-                    System.out.println("'restart [rows] [cols] [bombs]': starts a new game with the specified number of rows, columns, and bombs.");
-                    System.out.println("'reveal [row] [col]': reveals a square at the specified row and column.");
-                    System.out.println("'mark [row] [col]': marks a square at a specified row and column as a bomb.");
-                    System.out.println("'exit': exits the program.");
-            }
-
-            if (game != null) {
-                System.out.println(game.getBoardString());
-            }
-
-            if (game != null && game.gameState == GameState.LOST) {
-                System.out.println("Sorry! Better luck next time!");
-            } else if (game != null && game.gameState == GameState.WON) {
-                System.out.println("Congratulations! You won!");
-            }
-        }
-
-        sc.close();
     }
 }
