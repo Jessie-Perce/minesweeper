@@ -1,6 +1,9 @@
 package model;
 
 import java.util.Random;
+import java.util.Set;
+
+import controller.BoardObserver;
 
 public class Board {
     private static final int MAX_ROWS = 99;
@@ -14,6 +17,11 @@ public class Board {
     private int revealed;
     private final int bombs;
     private GameState gameState;
+    private Set<BoardObserver> observers;
+
+    public void register(BoardObserver observer) {
+
+    }
 
     public Board(int rows, int cols, int bombs) {
         this.rows = Math.min(rows, MAX_ROWS);
