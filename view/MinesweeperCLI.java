@@ -44,7 +44,7 @@ public class MinesweeperCLI {
                         int col = Integer.parseInt(tokens[2]);
 
                         if (row < game.getMaxRows() && col < game.getMaxCols()) {
-                            game.reveal(row, col);
+                            game.move(row, col);
                         } else {
                             System.out.println("Not valid dumbass.");
                         }

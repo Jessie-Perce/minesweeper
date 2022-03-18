@@ -84,8 +84,8 @@ public class Board {
         // of squares
         this.bombs = Math.min(bombs, (int)(this.squares * MAX_BOMBS_RATIO));
 
-        // sets GameState to in progress
-        this.gameState = GameState.IN_PROGRESS;
+        // sets GameState to not started
+        this.gameState = GameState.NOT_STARTED;
 
         // makes the board data structure
         this.board = new Square[rows][cols];
@@ -98,66 +98,33 @@ public class Board {
         }
     }
 
-    private void init() {
+    /**
+     * Fills the board with bombs, updates other values
+     * and sets GameState to in progress, working around the first square revealed.
+     * @param i the y-coord of the first move
+     * @param j the x-coord of the first move
+     */
+    private void init(int i, int j) {
         // TODO: implement init that works around starting location.
     }
 
-    public void reveal(int i, int j) {
-        board[i][j].reveal();
-
-        if (board[i][j].getValue() == 0) {
-            if (i + 1 < rows && j + 1 < cols) {
-                if (!board[i + 1][j + 1].getVisibility()) {
-                    reveal(i + 1, j + 1);
-                }
-            }
-            if (i + 1 < rows) {
-                if (!board[i + 1][j].getVisibility()) {
-                    reveal(i + 1, j);
-                }
-            }
-            if (i + 1 < rows && j - 1 >= 0) {
-                if (!board[i + 1][j - 1].getVisibility()) {
-                    reveal(i + 1, j - 1);
-                }
-            }
-            if (j + 1 < cols) {
-                if (!board[i][j + 1].getVisibility()) {
-                    reveal(i, j + 1);
-                }
-            }
-            if (j - 1 >= 0) {
-                if (!board[i][j - 1].getVisibility()) {
-                    reveal(i, j - 1);
-                }
-            }
-            if (i - 1 >= 0 && j + 1 < cols) {
-                if (!board[i - 1][j + 1].getVisibility()) {
-                    reveal(i - 1, j + 1);
-                }
-            }
-            if (i - 1 >= 0) {
-                if (!board[i - 1][j].getVisibility()) {
-                    reveal(i - 1, j);
-                }
-            }
-            if (i - 1 >= 0 && j - 1 >= 0) {
-                if (!board[i - 1][j - 1].getVisibility()) {
-                    reveal(i - 1, j - 1);
-                }
-            }
-            revealed++;
-        } else if (board[i][j].getValue() < 0) {
-            gameState = GameState.LOST;
-        } else {
-            revealed++;
-        }
-
-        if (revealed == squares - bombs && gameState != GameState.LOST) {
-            gameState = GameState.WON;
-        }
+    /**
+     * Reveals a square, and if it was empty, reveals its neighbors.
+     * Calls init upon submission of the first move.
+     * @param i the y-coord of the first move
+     * @param j the x-coord of the first move
+     */
+    public void move(int i, int j) {
+        // TODO: implement reveal that works calls init and does normal
+        // reveal stuff
     }
 
+    /**
+     * Calls mark on a specific square, whether that square becomes
+     * marked or not is up to the square to decide.
+     * @param i y-coord of the square
+     * @param j x-coord of the square
+     */
     public void mark(int i, int j) {
         board[i][j].mark();
     }
@@ -174,7 +141,8 @@ public class Board {
         return this.cols;
     }
 
-    public String getBoardString() {
+    @Override
+    public String toString() {
         StringBuilder boardString = new StringBuilder();
 
         for (int i = 0; i < rows; i++) {
