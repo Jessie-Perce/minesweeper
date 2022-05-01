@@ -112,9 +112,18 @@ public class Board {
         while (bombsLeft > 0) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
-                    if (board[i][j] == 0 && rng.nextInt(0, squares) <= (int)(bombs / 2)) {
-                        
+                    if (startI != i && startJ != j && bombsLeft > 0 && board[i][j].getValue() == 0 && rng.nextInt(0, squares) <= (int)(bombs / 2)) {
+                        board[i][j]= new Square(-1);
+                        bombsLeft--;
                     }
+                }
+            }
+        }
+        
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (board[i][j].getValue() == 0) {
+                    board[i][j] = new Square(getAdjacencies(i, j));
                 }
             }
         }
@@ -126,9 +135,12 @@ public class Board {
      * @param i the y-coord of the first move
      * @param j the x-coord of the first move
      */
-    public void move(int i, int j) {
+    public void move(int row, int col) {
         // TODO: implement reveal that works calls init and does normal
         // reveal stuff
+        if (gameState == GameState.NOT_STARTED) {
+            init(row, col);
+        }
     }
 
     /**
@@ -137,7 +149,7 @@ public class Board {
      * @param i y-coord of the square
      * @param j x-coord of the square
      */
-    public void mark(int i, int j) {
+    public void mark(int row, int col) {
         board[i][j].mark();
     }
 
@@ -165,5 +177,20 @@ public class Board {
         }
 
         return boardString.toString();
+    }
+
+    private int getAdjacencies(int row, int col) {
+        int adjacencies = 0;
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if ((row + i) < 0 || (row + i) >= rows || (col + j) < 0 || (col + j) >= cols) {
+                    int curValue = board[row + i][col + j].getValue()
+                    adjacencies += (curValue - Math.abs(curValue)) / curValue;
+                }
+            }
+        }
+
+        return adjacencies;
     }
 }
