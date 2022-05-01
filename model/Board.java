@@ -1,6 +1,8 @@
 package model;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * A class representing a Minesweeper board.
@@ -101,18 +103,27 @@ public class Board {
     /**
      * Fills the board with bombs, updates other values
      * and sets GameState to in progress, working around the first square revealed.
-     * @param startI the y-coord of the first move
-     * @param startJ the x-coord of the first move
+     * @param startRow the y-coord of the first move
+     * @param startCol the x-coord of the first move
      */
-    private void init(int startI, int startJ) {
-        // TODO: implement init that works around starting location.
+    private void init(int startRow, int startCol) {
         Random rng = new Random();
         int bombsLeft = bombs;
+
+        Set<Integer> badRows = new HashSet<>();
+        badRows.add(startRow - 1);
+        badRows.add(startRow);
+        badRows.add(startRow + 1);
+
+        Set<Integer> badCols = new HashSet<>();
+        badCols.add(startRow - 1);
+        badCols.add(startRow);
+        badCols.add(startRow + 1);
 
         while (bombsLeft > 0) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
-                    if (startI != i && startJ != j && bombsLeft > 0 && board[i][j].getValue() == 0 && rng.nextInt(0, squares) <= (int)(bombs / 2)) {
+                    if ((!badRows.contains(i) || !badRows.contains(i)) && bombsLeft > 0 && board[i][j].getValue() == 0 && rng.nextInt(0, squares) <= (int)(bombs / 2)) {
                         board[i][j]= new Square(-1);
                         bombsLeft--;
                     }
@@ -132,25 +143,42 @@ public class Board {
     /**
      * Reveals a square, and if it was empty, reveals its neighbors.
      * Calls init upon submission of the first move.
-     * @param i the y-coord of the first move
-     * @param j the x-coord of the first move
+     * @param row the y-coord of the first move
+     * @param col the x-coord of the first move
      */
     public void move(int row, int col) {
-        // TODO: implement reveal that works calls init and does normal
-        // reveal stuff
         if (gameState == GameState.NOT_STARTED) {
             init(row, col);
+            gameState = GameState.IN_PROGRESS;
+        }
+        
+        if (!board[row][col].getVisibility()) {
+            board[row][col].reveal();
+
+            if (board[row][col].getValue() == 0) {
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if ((row + i) >= 0 && (row + i) < rows && (col + j) >= 0 && (col + j) < cols) {
+                            move(row + i, col + j);
+                        }
+                    }
+                }
+            } else if (board[row][col].getValue() < 0) {
+                gameState = GameState.LOST;
+            }
+
+            gameState = (revealed - squares) == bombs && gameState != GameState.LOST ? GameState.WON : gameState;
         }
     }
 
     /**
      * Calls mark on a specific square, whether that square becomes
      * marked or not is up to the square to decide.
-     * @param i y-coord of the square
-     * @param j x-coord of the square
+     * @param row y-coord of the square
+     * @param col x-coord of the square
      */
     public void mark(int row, int col) {
-        board[i][j].mark();
+        board[row][col].mark();
     }
 
     public GameState getGameState() {
@@ -184,9 +212,9 @@ public class Board {
 
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
-                if ((row + i) < 0 || (row + i) >= rows || (col + j) < 0 || (col + j) >= cols) {
-                    int curValue = board[row + i][col + j].getValue()
-                    adjacencies += (curValue - Math.abs(curValue)) / curValue;
+                if ((row + i) >= 0 && (row + i) < rows && (col + j) >= 0 && (col + j) < cols) {
+                    int curValue = board[row + i][col + j].getValue();
+                    adjacencies += curValue < 0 ? 1 : 0;
                 }
             }
         }

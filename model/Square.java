@@ -72,7 +72,7 @@ public class Square {
         if (visible) {
             return value >= 0 ? Integer.toString(value) : "X";
         } else if (marked) {
-            return "•";
+            return "*";
         } else {
             return " ";
         }
