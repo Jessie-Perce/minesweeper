@@ -101,11 +101,23 @@ public class Board {
     /**
      * Fills the board with bombs, updates other values
      * and sets GameState to in progress, working around the first square revealed.
-     * @param i the y-coord of the first move
-     * @param j the x-coord of the first move
+     * @param startI the y-coord of the first move
+     * @param startJ the x-coord of the first move
      */
-    private void init(int i, int j) {
+    private void init(int startI, int startJ) {
         // TODO: implement init that works around starting location.
+        Random rng = new Random();
+        int bombsLeft = bombs;
+
+        while (bombsLeft > 0) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (board[i][j] == 0 && rng.nextInt(0, squares) <= (int)(bombs / 2)) {
+                        
+                    }
+                }
+            }
+        }
     }
 
     /**
