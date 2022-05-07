@@ -5,7 +5,6 @@ import model.Board;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import controller.Observer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
