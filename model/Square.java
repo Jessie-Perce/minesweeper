@@ -68,6 +68,10 @@ public class Square {
         return visible;
     }
 
+    public boolean getMarked() {
+        return this.marked;
+    }
+
     public String toString() {
         if (visible) {
             return value >= 0 ? Integer.toString(value) : "X";

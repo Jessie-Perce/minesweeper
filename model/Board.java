@@ -1,8 +1,12 @@
 package model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import controller.Observer;
 
 /**
  * A class representing a Minesweeper board.
@@ -62,6 +66,11 @@ public class Board {
     private GameState gameState;
 
     /**
+     * Collection of all observers
+     */
+    private List<Observer> observers;
+
+    /**
      * Constructor that creates a GameBoard.
      * @param rows number of rows desired by the user.
      * @param cols number of cols desired by the user.
@@ -98,6 +107,8 @@ public class Board {
                 this.board[i][j] = new Square(0);
             }
         }
+
+        observers = new LinkedList<>();
     }
 
     /**
@@ -147,12 +158,12 @@ public class Board {
      * @param col the x-coord of the first move
      */
     public void move(int row, int col) {
-        if (gameState == GameState.NOT_STARTED) {
+        if (gameState == GameState.NOT_STARTED && !board[row][col].getMarked()) {
             init(row, col);
             gameState = GameState.IN_PROGRESS;
         }
         
-        if (!board[row][col].getVisibility()) {
+        if (!board[row][col].getVisibility() && !board[row][col].getMarked()) {
             board[row][col].reveal();
 
             if (board[row][col].getValue() == 0) {
@@ -169,6 +180,7 @@ public class Board {
 
             gameState = (revealed - squares) == bombs && gameState != GameState.LOST ? GameState.WON : gameState;
         }
+        notifyObservers();
     }
 
     /**
@@ -179,18 +191,39 @@ public class Board {
      */
     public void mark(int row, int col) {
         board[row][col].mark();
+        notifyObservers();
+    }
+
+    public void registerObserver(Observer o) {
+        observers.add(o);
+    }
+
+    public void notifyObservers() {
+        observers.forEach(ob -> ob.handle());
     }
 
     public GameState getGameState() {
         return this.gameState;
     }
 
-    public int getMaxRows() {
+    public int getRows() {
         return this.rows;
     }
 
-    public int getMaxCols() {
+    public int getCols() {
         return this.cols;
+    }
+
+    public int getbombs() {
+        return this.bombs;
+    }
+
+    public int getRevealed() {
+        return revealed;
+    }
+
+    public Square getSquare(int row, int col) {
+        return board[row][col];
     }
 
     @Override

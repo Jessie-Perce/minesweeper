@@ -81,10 +81,6 @@ public class MinesweeperCLI {
         String[] tokens;
         Board game = null;
 
-        int rows = 0;
-        int cols = 0;
-        int bombs = 0;
-
         boolean sentinel = true;
 
         System.out.println("Welcome to Minesweeper! \n\nTo get started, type \"start\"! \n\nFor more info, hit 'Enter' or type \"help\"!");
