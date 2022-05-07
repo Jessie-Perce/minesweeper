@@ -40,7 +40,7 @@ public class MinesweeperCLI {
             int col = sc.nextInt();
             sc.nextLine();
 
-            if (row < game.getMaxRows() && col < game.getMaxCols()) {
+            if (row < game.getRows() && col < game.getCols()) {
                 game.move(row, col);
             } else {
                 System.out.println("Not valid dumbass.");
@@ -59,7 +59,7 @@ public class MinesweeperCLI {
             int col = sc.nextInt();
             sc.nextLine();
 
-            if (row < game.getMaxRows() && col < game.getMaxCols()) {
+            if (row < game.getRows() && col < game.getCols()) {
                 game.mark(row, col);
             } else {
                 System.out.println("Not valid dumbass.");
